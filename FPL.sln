@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32002.261
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "FPL", "FPL.pyproj", "{3D322CD9-B82D-46AE-971A-0FFB24C1BA90}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3D322CD9-B82D-46AE-971A-0FFB24C1BA90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D322CD9-B82D-46AE-971A-0FFB24C1BA90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5CEEC7A8-7ECB-4EE9-86A4-12B3F795910B}
+	EndGlobalSection
+EndGlobal
