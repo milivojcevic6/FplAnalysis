@@ -20,11 +20,11 @@ json= r.json()
 p= pd.DataFrame(json['elements'])          # uploading players
 
 #------------------------------------------ creating a list for player dropdown
-p= pd.DataFrame(json['elements'])
+
 p11=p[p['team_code']==3]
 p11=p11.loc[:,['web_name','code']]
 p11=p11.rename({'web_name': 'label', 'code': 'value'}, axis=1)
-dic_p1= p11.to_dict(orient='records')
+ddic_p1= p11.to_dict(orient='records')
 
 #------------------------------------------ creating default players for the table
 
@@ -38,7 +38,7 @@ p1=p1.append(p2)
 p1=p1.transpose()
 p1['Categories'] = indd
 p1.columns=['Player 1', 'Player 2', 'Categories']
-df=p1.to_dict('records')
+df=p1
 
 
 teams = pd.DataFrame(json['teams'])          # uploading teams
@@ -63,6 +63,7 @@ SIDEBAR_STYLE = {
     "width": "16rem",
     "padding": "2rem 1rem",
     "background-color": "#00308f",
+    'color':'#f8f9fa'
 }
 
 CONTENT_STYLE = {
@@ -76,11 +77,12 @@ CONTENT_STYLE = {
 
 sidebar = html.Div(
     [
-        html.H2("FPL Analysis", className="display-4", style={'color':'#f8f9fa'}),
+        html.H2("FPL Analysis", className="display-4"),
         html.Hr(),
         html.P(
             "Number of students per education level", className="lead"
         ),
+        html.Br(),
         dbc.Nav(
             [
                 dbc.NavLink("Home", href="/", active="exact"),
@@ -183,52 +185,61 @@ def render_page_content(pathname):
         return [
                 html.H1('Compare players',
                         style={'textAlign':'center'}),
+                html.Hr(),
                 
-                html.H4("Select first player",
-                       style={'margin-top': '5%', 'textAlign':'center'}),
-
-                dcc.Dropdown(
-                    id='team1',
-                    options=dic_teams,
-                    multi=False,
-                    value='3'
-                ),
                 html.Div([
-                    dcc.Dropdown(
-                        id='player1',
-                        options=dic_p1,
-                        value=p11.iloc[0,1],
-                        multi=False,
-                    )
-                ]),
+                    html.Div([
+                        html.H4("Select first player",
+                           style={'margin-top': '5%', 'textAlign':'center'}),
 
-                html.H4("Select second player",
-                       style={'margin-top': '2%', 'textAlign':'center'}),
+                        dcc.Dropdown(
+                            id='team1',
+                            options=dic_teams,
+                            multi=False,
+                            value=0
+                        ),
+                        html.Div([
+                            dcc.Dropdown(
+                                id='player1',
+                                options=ddic_p1,
+                                value=0,
+                                multi=False,
+                            )
+                        ])], className='mx-auto', style={'width':'40%'}),
 
-                dcc.Dropdown(
-                    id='team2',
-                    options=dic_teams,
-                    multi=False,
-                    value='3'
-                ),
-                html.Div([
-                    dcc.Dropdown(
-                        id='player2',
-                        options=dic_p1,
-                        value=p11.iloc[0,1],
-                        multi=False,
-                    )
-                ]),
-                html.Div([
+                    html.Div([
+                        html.H4("Select second player",
+                               style={'margin-top': '5%', 'textAlign':'center'}),
+                        dcc.Dropdown(
+                            id='team2',
+                            options=dic_teams,
+                            multi=False,
+                            value=0
+                        ),
+                        html.Div(
+                            dcc.Dropdown(
+                                id='player2',
+                                options=ddic_p1,
+                                value=0,
+                                multi=False,
+                            )
+                        )], className='mx-auto', style={'width':'40%'})],
+                         className='d-flex'),
+                html.Br(),
+                html.Div(
+                    html.Div(
                             dash_table.DataTable(
                                     id='table',
-                                    columns=['Categories', 'Player 1', 'Player 2'],
-                                    data=df,
-                                    style_cell=dict(textAlign='left'),
+                                    columns=[{"name": i, "id": i} for i in df.columns],
+                                    #columns=['Categories', 'Player 1', 'Player 2'],
+                                    data=df.to_dict('records'),
+                                    style_cell=dict(textAlign='center'),
                                     style_header=dict(backgroundColor="paleturquoise"),
                                     style_data=dict(backgroundColor="lavender")
-                                )
-                        ])
+                                ),
+                        style={'width':'50%'},
+                        className='mx-auto'),
+                    className='d-flex')
     ]
     elif pathname == "/prediction":
         return [
@@ -255,43 +266,52 @@ def render_page_content(pathname):
 def update_graph(option_slctd):
 
     #container = "Displayed category: {}".format(option_slctd)
-    print(option_slctd)
+    #print(option_slctd)
 
     df=pd.DataFrame(json['elements'])
     dff = df.sort_values( option_slctd, ascending=False)
     dff = dff.loc[:,['web_name', option_slctd]]
     names = dff.iloc[0:5, 0]
     values = dff.iloc[0:5, 1]
-
+    print(type(option_slctd))
     barchart=px.bar(dff, names, values, text_auto=True)
 
     return barchart
 
 @app.callback(
-    Output('player1', 'children'),
+    [Output('player1', 'value'),
+     Output('player1', 'options')],
     Input('team1', 'value')
 )
 def update_output(value1):
-
-    p1=p[p['team_code']==value1]
-    p11=p1.loc[:,['web_name','code']]
+    print('#')
+    print(value1)
+    pp= pd.DataFrame(json['elements'])
+    p11=pp[pp['team_code']==value1]
+    p11=p11.loc[:,['web_name','code']]
     p11=p11.rename({'web_name': 'label', 'code': 'value'}, axis=1)
     dic_p1= p11.to_dict(orient='records')
-    print(p11)
+    print(p11.head())
+    print(p11.shape)
+    if p11.shape==(0,2):
+        x=0
+    else: x=p11.iloc[0,1]
 
-    x=html.Div([
-        dcc.Dropdown(
-            id='player1',
-            value= p11.iloc[1,1],
-            options=dic_p1,
-            multi=False,
-        )
-    ])
+    #x=html.Div([
+    #    dcc.Dropdown(
+    #        id='player1',
+    #        value= p11.iloc[0,1],
+    #        options=dic_p1,
+    #        multi=False,
+    #    )
+    #])
 
-    return x
+    #return x
+    return x, dic_p1
 
 @app.callback(
-    Output('player2', 'children'),
+    [Output('player2', 'value'),
+     Output('player2', 'options')],
     Input('team2', 'value')
 )
 def update_output(value1):
@@ -301,51 +321,38 @@ def update_output(value1):
     p11=p11.rename({'web_name': 'label', 'code': 'value'}, axis=1)
     dic_p1= p11.to_dict(orient='records')
 
-    x=html.Div([
-        dcc.Dropdown(
-            id='player2',
-            value= p11.iloc[1,1],
-            options=dic_p1,
-            multi=False,
-        )
-    ])
+    if p11.shape==(0,2):
+        x=0
+    else: x=p11.iloc[0,1]
 
-    return x
+    return x, dic_p1
 
 @app.callback(
-    Output('table','figure'),
+    [Output('table','data'),
+     Output('table','columns')],
     [Input('player1', 'value'),
     Input('player2', 'value')]
 )
 def update_output(vp1,vp2):
+    if vp1==0 or vp2==0:
+        vp1=80201
+        vp2=54694
 
     p1=p[p['code']==vp1]
     p2=p[p['code']==vp2]
     p1=p1.loc[:,['web_name','total_points','goals_scored','assists','clean_sheets','minutes','penalties_missed','penalties_saved','saves','yellow_cards','red_cards', 'dreamteam_count','bonus','now_cost']]
     p2=p2.loc[:,['web_name','total_points','goals_scored','assists','clean_sheets','minutes','penalties_missed','penalties_saved','saves','yellow_cards','red_cards', 'dreamteam_count','bonus','now_cost']]
-    indd =['Player','Total points','Goals scored','Assists','Clean sheets','Minutes played','Penalities missed','Penalities saved','Saves','Yellow cards','Red cards','Team of the week','Bonus points','Current value (times 10)']
+    indd =['Name','Total points','Goals scored','Assists','Clean sheets','Minutes played','Penalities missed','Penalities saved','Saves','Yellow cards','Red cards','Team of the week','Bonus points','Current value (times 10)']
 
     p1=p1.append(p2)
     p1=p1.transpose()
     p1['Categories'] = indd
-    print('p1')
-    print(p1.head())
     p1.columns=['Player 1', 'Player 2', 'Categories']
-    df=p1.to_dict('records')
+    p1=p1[['Player 1', 'Categories', 'Player 2']]
+    df=p1
+    columns=[{"name": i, "id": i} for i in df.columns]
 
-    x=html.Div([
-            dash_table.DataTable(
-                id='table',
-                columns=['Categories', 'Player 1', 'Player 2'],
-                data=df,
-                style_cell=dict(textAlign='left'),
-                style_header=dict(backgroundColor="paleturquoise"),
-                style_data=dict(backgroundColor="lavender")
-            )
-    ])
-
-
-    return x
+    return df.to_dict('records'), columns 
 
 
 if __name__ == '__main__':
