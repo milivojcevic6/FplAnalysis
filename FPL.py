@@ -11,7 +11,7 @@ import requests
 import numpy as np
 import matplotlib.pyplot as plt
 
-url= "https://fantasy.premierleague.com/api/bootstrap-static/"
+url= 'https://fantasy.premierleague.com/api/bootstrap-static/'
 r= requests.get(url)
 json= r.json()
 
@@ -54,40 +54,39 @@ app.layout = html.Div([
 ])
 
 SIDEBAR_STYLE = {
-    "position": "fixed",
-    "top": 0,
-    "left": 0,
-    "bottom": 0,
-    "width": "16rem",
-    "padding": "2rem 1rem",
-    "background-color": "#00308f",
+    'position': 'fixed',
+    'top': 0,
+    'left': 0,
+    'bottom': 0,
+    'width': '16rem',
+    'padding': '2rem 1rem',
+    'background-color': '#00308f',
     'color':'#f8f9fa'
 }
 
 CONTENT_STYLE = {
-    "min-height": "100%",
-    "margin-left": "16rem",
-    #"margin-right": "2rem",
-    "padding": "2rem 1rem",
-    "background-color": "#f8f9fa",
+    'margin-left': '16rem',
+    #'margin-right': '2rem',
+    'padding': '2rem 1rem',
+    'background-color': '#f8f9fa',
 }
 
 
 sidebar = html.Div(
     [
-        html.H2("FPL Analysis", className="display-4"),
+        html.H2('FPL Analysis', className='display-4'),
         html.Hr(),
         html.P(
-            "Number of students per education level", className="lead"
+            'Number of students per education level', className='lead'
         ),
         html.Br(),
         dbc.Nav(
             [
-                dbc.NavLink("Home", href="/", active="exact"),
-                dbc.NavLink("Top players", href="/top", active="exact"),
-                dbc.NavLink("Player comparison", href="/players", active="exact"),
-                dbc.NavLink("Player prediction", href="/prediction", active="exact"),
-            ], style={'color':"light"},
+                dbc.NavLink('Home', href='/', active='exact'),
+                dbc.NavLink('Top players', href='/top', active='exact'),
+                dbc.NavLink('Player comparison', href='/players', active='exact'),
+                dbc.NavLink('Player prediction', href='/prediction', active='exact'),
+            ],
             vertical=True,
             pills=True,
         ),
@@ -95,65 +94,65 @@ sidebar = html.Div(
     style=SIDEBAR_STYLE,
 )
 
-content = html.Div(id="page-content", children=[], style=CONTENT_STYLE)
+content = html.Div(id='page-content', children=[], style=CONTENT_STYLE)
 
 app.layout = html.Div([
-    dcc.Location(id="url"),
+    dcc.Location(id='url'),
     sidebar,
     content
 ])
 
 
 @app.callback(
-    Output("page-content", "children"),
-    [Input("url", "pathname")]
+    Output('page-content', 'children'),
+    [Input('url', 'pathname')]
 )
 def render_page_content(pathname):
-    if pathname == "/":
+    if pathname == '/':
         return [
                 html.H1('Welcome to the FPL Analysis',
                         style={'textAlign':'center'}),
-                html.H4("Select the section you would like to visit",
-                       style={'margin-top': '15%', 'textAlign':'center'}), 
+                html.Hr(),
+                html.H4('Select the section you would like to visit',
+                       style={'margin-top': '14%', 'textAlign':'center'}), 
                 html.Div(
                     [
-                        dbc.Button("Top players", href="/top", className='mt-4', style={'width':'30%'}, outline=True, color="secondary", size="lg"),
+                        dbc.Button('Top players', href='/top', className='mt-4', style={'width':'30%'}, outline=True, color='secondary', size='lg'),
                         html.Br(),
-                        dbc.Button("Player comparison", href="/players", className='my-2', style={'width':'30%'}, outline=True, color="secondary", size="lg"),
+                        dbc.Button('Player comparison', href='/players', className='my-2', style={'width':'30%'}, outline=True, color='secondary', size='lg'),
                         html.Br(),
-                        dbc.Button("Player prediction", href="/prediction", style={'width':'30%'}, outline=True, color="secondary", size="lg"),
+                        dbc.Button('Player prediction', href='/prediction', style={'width':'30%'}, outline=True, color='secondary', size='lg'),
                     ],
-                    className="d-grid gap-2 d-md-block", 
+                    className='d-grid gap-2 d-md-block', 
                     style={'textAlign':'center'},
                 ),
-                html.Div(
-                    html.H4('Currently, FPL is played by '+str(json['total_players'])+' players', className='fixed-bottom'),
-                        style={'margin-left':'35%', 'background-color':'red', 'width':'30%' },
-                    className='d-flex')
+                html.H4('Currently, FPL is played by '+str(json['total_players'])+' players',
+                       style={'margin-top': '13%', 'textAlign':'center'})
                 ]
-    elif pathname == "/top":
+    elif pathname == '/top':
         return [
                 html.H1('Top 5 players',
                         style={'textAlign':'center'}),
-                html.H4("Select the category",
-                       style={'margin-top': '5%', 'textAlign':'center'}),
+                html.Hr(),
+                html.H4('Select the category',
+                       style={'margin-top': '3.5%', 'textAlign':'center'}),
                 
-                dcc.Dropdown(id="cat",
+                dcc.Dropdown(id='cat',
                     options=[
-                        {"label": "Total points", "value": "total_points"},
-                        {"label": "Total goals", "value": "goals_scored"},
-                        {"label": "Total assists", "value": "assists"},
-                        {"label": "Total clean sheets", "value": "clean_sheets"}],
+                        {'label': 'Total points', 'value': 'total_points'},
+                        {'label': 'Total goals', 'value': 'goals_scored'},
+                        {'label': 'Total assists', 'value': 'assists'},
+                        {'label': 'Total clean sheets', 'value': 'clean_sheets'}],
                     multi=False,
                     clearable=False,
-                    value="total_points",
-                    style={'width': "40%"}
+                    value='total_points',
+                    style={'width': '40%'}
                     ),
                     html.Br(),
                     dcc.Graph(id='top_map', figure={})
                 ]
 
-    elif pathname == "/players":
+    elif pathname == '/players':
         return [
                 html.H1('Compare players',
                         style={'textAlign':'center'}),
@@ -161,7 +160,7 @@ def render_page_content(pathname):
                 
                 html.Div([
                     html.Div([
-                        html.H4("Select first player",
+                        html.H4('Select first player',
                            style={'margin-top': '5%', 'textAlign':'center'}),
 
                         dcc.Dropdown(
@@ -180,7 +179,7 @@ def render_page_content(pathname):
                         ])], className='mx-auto', style={'width':'40%'}),
 
                     html.Div([
-                        html.H4("Select second player",
+                        html.H4('Select second player',
                                style={'margin-top': '5%', 'textAlign':'center'}),
                         dcc.Dropdown(
                             id='team2',
@@ -202,11 +201,11 @@ def render_page_content(pathname):
                     html.Div(
                             dash_table.DataTable(
                                     id='table',
-                                    columns=[{"name": i, "id": i} for i in df.columns],
+                                    columns=[{'name': i, 'id': i} for i in df.columns],
                                     data=df.to_dict('records'),
                                     style_cell=dict(textAlign='center'),
-                                    style_header=dict(backgroundColor="paleturquoise"),
-                                    style_data=dict(backgroundColor="lavender"),
+                                    style_header=dict(backgroundColor='paleturquoise'),
+                                    style_data=dict(backgroundColor='lavender'),
                                     style_data_conditional=[
                                         {
                                             'if': {
@@ -230,21 +229,28 @@ def render_page_content(pathname):
                         className='mx-auto'),
                     className='d-flex')
     ]
-    elif pathname == "/prediction":
+    elif pathname == '/prediction':
         return [
                 html.H1('Player prediction',
                         style={'textAlign':'center'}),
+                html.Hr(),
 
 
                 ]
     # If the user tries to reach a different page, return a 404 message
-    return dbc.Jumbotron(
-        [
-            html.H1("404: Not found", className="text-danger"),
-            html.Hr(),
-            html.P(f"The pathname {pathname} was not recognised..."),
-        ]
-    )
+
+    return html.Div(
+                dbc.Container(
+            [
+                html.H1('404: Not found', className='text-danger display-3'),
+                html.Hr(),
+                html.P(f'The pathname {pathname} was not recognised...'),
+            ],
+                fluid=True, 
+                className="py-3",
+            ),
+            className="p-3 bg-light rounded-3",
+)
 
 @app.callback(
     Output(component_id='top_map', component_property='figure'),
@@ -320,7 +326,7 @@ def update_output(vp1,vp2):
     p1['Categories'] = indd
     p1.columns=['Player 1', 'Player 2', 'Categories']
     p1=p1[['Player 1', 'Categories', 'Player 2']]
-    columns=[{"name": i, "id": i} for i in p1.columns]
+    columns=[{'name': i, 'id': i} for i in p1.columns]
 
     return p1.to_dict('records'), columns 
 
