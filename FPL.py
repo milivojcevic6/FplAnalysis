@@ -157,8 +157,11 @@ def render_page_content(pathname):
                     ],
                     className="d-grid gap-2 d-md-block", 
                     style={'textAlign':'center'},
-                )
-
+                ),
+                html.Div(
+                    html.H4('Currently, FPL is played by '+str(json['total_players'])+' players', className='fixed-bottom'),
+                        style={'margin-left':'35%', 'background-color':'red', 'width':'30%' },
+                    className='d-flex')
                 ]
     elif pathname == "/top":
         return [
@@ -174,6 +177,7 @@ def render_page_content(pathname):
                         {"label": "Total assists", "value": "assists"},
                         {"label": "Total clean sheets", "value": "clean_sheets"}],
                     multi=False,
+                    clearable=False,
                     value="total_points",
                     style={'width': "40%"}
                     ),
@@ -235,7 +239,34 @@ def render_page_content(pathname):
                                     data=df.to_dict('records'),
                                     style_cell=dict(textAlign='center'),
                                     style_header=dict(backgroundColor="paleturquoise"),
-                                    style_data=dict(backgroundColor="lavender")
+                                    style_data=dict(backgroundColor="lavender"),
+                                    style_data_conditional=[
+                                        {
+                                            'if': {
+                                                'filter_query': '{Player 1} > {Player 2}',
+                                                'column_id': 'Player 1'
+                                            },
+
+                                                'color': 'red'
+                                        },
+                                        
+                                        {
+                                            'if': {
+                                                'filter_query': '{Player 2} > {Player 1}',
+                                                'column_id': 'Player 2'
+                                            },
+
+                                                'color': 'red'
+                                        },
+                                        
+                                        {
+                                            'if': {
+                                                'row_index': 0
+                                            },
+
+                                                'color': 'black'
+                                        }
+                                    ]
                                 ),
                         style={'width':'50%'},
                         className='mx-auto'),
@@ -350,6 +381,7 @@ def update_output(vp1,vp2):
     p1.columns=['Player 1', 'Player 2', 'Categories']
     p1=p1[['Player 1', 'Categories', 'Player 2']]
     df=p1
+    print(df)
     columns=[{"name": i, "id": i} for i in df.columns]
 
     return df.to_dict('records'), columns 
