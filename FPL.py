@@ -1,5 +1,3 @@
-#%%
-
 import dash
 import dash_bootstrap_components as dbc
 import dash_html_components as html
@@ -93,36 +91,6 @@ sidebar = html.Div(
             vertical=True,
             pills=True,
         ),
-        #html.Footer(
-        #        html.Div([
-        #                    html.A( html.I(className="fa fa-github"),
-        #                    href="https://github.com/milivojcevic6", target="_blank",),
-        #                    html.I(className="bi bi-person-bounding-box"),
-        #                    html.I(className="bi bi-person-bounding-box"),
-        #            ], className='col-sm-5 social d-inline')
-        #    )
-
-
-        #<div class="col-sm-5 social">
-        #            <ul>
-        #                <li>
-        #                    <a href="https://github.com/milivojcevic6" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
-        #               </li>
-        #                <li>
-        #                    <a href="https://www.linkedin.com/in/milivojcevic6" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
-       #                 </li>
-       #                 <li>
-       #                     <a href="https://www.instagram.com/milivojcevic6/" target="_blank"><i class="fa fa-instagram" aria-hidden="true"></i></a>
-        #                </li>
-        #            </ul>
-       #        </div>
-
-        #html.Div(
-        #    [
-        #        html.I(className="bi bi-person-bounding-box"),
-        #        html.I(className="bi bi-github"),
-        #        html.I(className="bi bi-linkedin"),
-        #    ], style={width="32"; height="32"}),
     ],
     style=SIDEBAR_STYLE,
 )
@@ -235,7 +203,6 @@ def render_page_content(pathname):
                             dash_table.DataTable(
                                     id='table',
                                     columns=[{"name": i, "id": i} for i in df.columns],
-                                    #columns=['Categories', 'Player 1', 'Player 2'],
                                     data=df.to_dict('records'),
                                     style_cell=dict(textAlign='center'),
                                     style_header=dict(backgroundColor="paleturquoise"),
@@ -246,27 +213,18 @@ def render_page_content(pathname):
                                                 'filter_query': '{Player 1} > {Player 2}',
                                                 'column_id': 'Player 1'
                                             },
-
-                                                'color': 'red'
-                                        },
-                                        
+                                            'color': 'red'},
                                         {
                                             'if': {
                                                 'filter_query': '{Player 2} > {Player 1}',
                                                 'column_id': 'Player 2'
                                             },
-
-                                                'color': 'red'
-                                        },
-                                        
+                                                'color': 'red'},
                                         {
                                             'if': {
                                                 'row_index': 0
                                             },
-
-                                                'color': 'black'
-                                        }
-                                    ]
+                                            'color': 'black'}]
                                 ),
                         style={'width':'50%'},
                         className='mx-auto'),
@@ -288,23 +246,17 @@ def render_page_content(pathname):
         ]
     )
 
-
-# Connect the Plotly graphs with Dash Components
 @app.callback(
     Output(component_id='top_map', component_property='figure'),
     [Input(component_id='cat', component_property='value')]
 )
 def update_graph(option_slctd):
 
-    #container = "Displayed category: {}".format(option_slctd)
-    #print(option_slctd)
-
     df=pd.DataFrame(json['elements'])
     dff = df.sort_values( option_slctd, ascending=False)
     dff = dff.loc[:,['web_name', option_slctd]]
     names = dff.iloc[0:5, 0]
     values = dff.iloc[0:5, 1]
-    print(type(option_slctd))
     barchart=px.bar(dff, names, values, text_auto=True)
 
     return barchart
@@ -315,29 +267,17 @@ def update_graph(option_slctd):
     Input('team1', 'value')
 )
 def update_output(value1):
-    print('#')
-    print(value1)
+
     pp= pd.DataFrame(json['elements'])
     p11=pp[pp['team_code']==value1]
     p11=p11.loc[:,['web_name','code']]
     p11=p11.rename({'web_name': 'label', 'code': 'value'}, axis=1)
     dic_p1= p11.to_dict(orient='records')
-    print(p11.head())
-    print(p11.shape)
+
     if p11.shape==(0,2):
         x=0
     else: x=p11.iloc[0,1]
 
-    #x=html.Div([
-    #    dcc.Dropdown(
-    #        id='player1',
-    #        value= p11.iloc[0,1],
-    #        options=dic_p1,
-    #        multi=False,
-    #    )
-    #])
-
-    #return x
     return x, dic_p1
 
 @app.callback(
@@ -380,11 +320,9 @@ def update_output(vp1,vp2):
     p1['Categories'] = indd
     p1.columns=['Player 1', 'Player 2', 'Categories']
     p1=p1[['Player 1', 'Categories', 'Player 2']]
-    df=p1
-    print(df)
-    columns=[{"name": i, "id": i} for i in df.columns]
+    columns=[{"name": i, "id": i} for i in p1.columns]
 
-    return df.to_dict('records'), columns 
+    return p1.to_dict('records'), columns 
 
 
 if __name__ == '__main__':
